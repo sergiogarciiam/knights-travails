@@ -13,12 +13,12 @@ class Node {
     return this.right !== null;
   }
 
-  isOne() {
-    return this.isLeft ^ !this.isRight;
-  }
-
   isBoth() {
     return this.isLeft() && this.isRight();
+  }
+
+  isNeither() {
+    return !this.isLeft() && !this.isRight();
   }
 }
 
@@ -47,6 +47,8 @@ class Tree {
 
   // insert functions
   insert(data, node = this.root) {
+    if (this.find(data) !== null) return;
+
     if (node.data > data) {
       this.insertLeft(data, node);
     } else {
@@ -71,23 +73,159 @@ class Tree {
   }
 
   // delete functions
-  delete(data, node = this.root) {
+  delete(data, node = this.root, parent) {
+    if (node === null) return;
+
     if (node.data > data && node.isLeft()) {
-      this.delete(data, node.left);
+      this.delete(data, node.left, node);
     } else if (node.data < data && node.isRight()) {
-      this.delete(data, node.right);
+      this.delete(data, node.right, node);
     } else if (node.data === data) {
-      this.deleteHelp(node);
-    } else {
-      return null;
+      this.deleteNode(node, parent);
     }
   }
 
-  deleteHelp(node) {
-    if (!node.isBoth()) {
-    } else if (node.isOne()) {
-    } else if (node.isBoth()) {
+  deleteNode(node, parent) {
+    if (node.isBoth()) {
+      const replacementNode = this.getReplacementNode(node, parent);
+      node.data = replacementNode.data;
+    } else if (node.isLeft()) {
+      this.replaceNode(node, parent, node.left);
+    } else if (node.isRight()) {
+      this.replaceNode(node, parent, node.right);
+    } else {
+      this.replaceNode(node, parent, null);
     }
+  }
+
+  getReplacementNode(node, parent) {
+    let currentNode = node.right;
+    while (currentNode.left !== null) {
+      parent = currentNode;
+      currentNode = currentNode.left;
+    }
+    this.deleteNode(currentNode, parent);
+    return currentNode;
+  }
+
+  replaceNode(node, parent, replacement) {
+    if (parent === null) {
+      this.root = replacement;
+    } else if (parent.left === node) {
+      parent.left = replacement;
+    } else {
+      parent.right = replacement;
+    }
+  }
+
+  // find function
+  find(data, node = this.root) {
+    if (node === null) return null;
+
+    if (node.data === data) {
+      return node;
+    } else if (node.data > data) {
+      return this.find(data, node.left);
+    } else {
+      return this.find(data, node.right);
+    }
+  }
+
+  // traverser functions
+  levelOrder(cb = null) {
+    let currentNode = this.root;
+    let resultArray = [];
+    let queue = [currentNode];
+
+    while (queue.length !== 0) {
+      currentNode = queue.shift();
+
+      if (currentNode.left !== null) queue.push(currentNode.left);
+      if (currentNode.right !== null) queue.push(currentNode.right);
+
+      if (cb !== null) cb(currentNode);
+      else resultArray.push(currentNode.data);
+    }
+
+    return cb === null ? resultArray : null;
+  }
+
+  inOrder(cb = null) {
+    if (cb === null) return this.inOrderGetArray();
+    else this.inOrderCallback(cb);
+  }
+
+  inOrderGetArray(currentNode = this.root, resultArray = []) {
+    if (currentNode.isLeft()) {
+      resultArray = this.inOrderGetArray(currentNode.left, resultArray);
+    }
+
+    resultArray.push(currentNode.data);
+
+    if (currentNode.isRight()) {
+      resultArray = this.inOrderGetArray(currentNode.right, resultArray);
+    }
+
+    return resultArray;
+  }
+
+  inOrderCallback(cb, currentNode = this.root, resultArray = []) {
+    if (currentNode.isLeft()) {
+      cb(this.inOrderCallback(cb, currentNode.left, resultArray));
+    }
+
+    if (currentNode.isRight()) {
+      cb(this.inOrderCallback(cb, currentNode.right, resultArray));
+    }
+
+    return currentNode;
+  }
+
+  preOrder(cb = null) {
+    let currentNode = this.root;
+    let resultArray = [];
+    let stack = [currentNode];
+
+    while (stack.length !== 0) {
+      currentNode = stack.pop();
+
+      if (currentNode.right !== null) stack.push(currentNode.right);
+      if (currentNode.left !== null) stack.push(currentNode.left);
+
+      if (cb !== null) cb(currentNode);
+      else resultArray.push(currentNode.data);
+    }
+
+    return cb === null ? resultArray : null;
+  }
+
+  postOrder(cb = null) {
+    if (cb === null) return this.postOrderGetArray();
+    else this.postOrderCallback(cb);
+  }
+
+  postOrderGetArray(currentNode = this.root, resultArray = []) {
+    if (currentNode.isLeft())
+      resultArray = this.postOrderGetArray(currentNode.left, resultArray);
+
+    if (currentNode.isRight())
+      resultArray = this.postOrderGetArray(currentNode.right, resultArray);
+
+    resultArray.push(currentNode.data);
+
+    return resultArray;
+  }
+
+  postOrderCallback(cb, currentNode = this.root, resultArray = []) {
+    if (currentNode.isLeft()) {
+      cb(this.postOrderCallback(cb, currentNode.left, resultArray));
+    }
+
+    if (currentNode.isRight()) {
+      cb(this.postOrderCallback(cb, currentNode.right, resultArray));
+    }
+
+    return currentNode;
   }
 
   // util functions
@@ -118,3 +256,5 @@ class Tree {
 
 const myTree = new Tree([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]);
 myTree.prettyPrint();
+//console.log(myTree.inOrder());
+console.log(myTree.inOrder((node) => console.log(node.data)));
