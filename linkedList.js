@@ -184,7 +184,7 @@ class LinkedList {
 }
 
 // ----- TEST ----- //
-let myList = new LinkedList();
+const myList = new LinkedList();
 myList.append(1);
 myList.append(2);
 myList.prepend(5);
