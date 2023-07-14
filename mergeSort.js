@@ -22,4 +22,5 @@ function merge(firstArray, secondArray) {
   return newArray;
 }
 
+// ----- TEST ----- //
 console.log(mergeSort([20, 2, 1, 8, 10, 5]));

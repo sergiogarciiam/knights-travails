@@ -19,5 +19,6 @@ function fibsRec(n) {
   return sequence;
 }
 
+// ----- TEST ----- //
 console.log(fibs(8));
 console.log(fibsRec(8));
