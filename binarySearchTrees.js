@@ -156,29 +156,21 @@ class Tree {
   }
 
   inOrderGetArray(currentNode = this.root, resultArray = []) {
-    if (currentNode.isLeft()) {
-      resultArray = this.inOrderGetArray(currentNode.left, resultArray);
-    }
+    if (currentNode === null) return resultArray;
 
+    resultArray = this.inOrderGetArray(currentNode.left, resultArray);
     resultArray.push(currentNode.data);
-
-    if (currentNode.isRight()) {
-      resultArray = this.inOrderGetArray(currentNode.right, resultArray);
-    }
+    resultArray = this.inOrderGetArray(currentNode.right, resultArray);
 
     return resultArray;
   }
 
-  inOrderCallback(cb, currentNode = this.root, resultArray = []) {
-    if (currentNode.isLeft()) {
-      cb(this.inOrderCallback(cb, currentNode.left, resultArray));
-    }
+  inOrderCallback(cb, currentNode = this.root) {
+    if (currentNode === null) return;
 
-    if (currentNode.isRight()) {
-      cb(this.inOrderCallback(cb, currentNode.right, resultArray));
-    }
-
-    return currentNode;
+    this.inOrderCallback(cb, currentNode.left);
+    cb(currentNode);
+    this.inOrderCallback(cb, currentNode.right);
   }
 
   preOrder(cb = null) {
@@ -205,27 +197,54 @@ class Tree {
   }
 
   postOrderGetArray(currentNode = this.root, resultArray = []) {
-    if (currentNode.isLeft())
-      resultArray = this.postOrderGetArray(currentNode.left, resultArray);
+    if (currentNode === null) return resultArray;
 
-    if (currentNode.isRight())
-      resultArray = this.postOrderGetArray(currentNode.right, resultArray);
-
+    resultArray = this.postOrderGetArray(currentNode.left, resultArray);
+    resultArray = this.postOrderGetArray(currentNode.right, resultArray);
     resultArray.push(currentNode.data);
 
     return resultArray;
   }
 
-  postOrderCallback(cb, currentNode = this.root, resultArray = []) {
-    if (currentNode.isLeft()) {
-      cb(this.postOrderCallback(cb, currentNode.left, resultArray));
-    }
+  postOrderCallback(cb, currentNode = this.root) {
+    if (currentNode === null) return;
 
-    if (currentNode.isRight()) {
-      cb(this.postOrderCallback(cb, currentNode.right, resultArray));
-    }
+    this.postOrderCallback(cb, currentNode.left);
+    this.postOrderCallback(cb, currentNode.right);
+    cb(currentNode);
+  }
 
-    return currentNode;
+  // heigh functions
+  heigh(data) {
+    const node = this.find(data);
+    return this.heighHelp(node);
+  }
+
+  heighHelp(node, cont = 0, max = 0) {
+    if (node === null) return max - 1;
+
+    cont += 1;
+    max = this.heighHelp(node.left, cont, max);
+    max = this.heighHelp(node.right, cont, max);
+
+    return cont >= max ? cont : max;
+  }
+
+  // depth functions
+  depth(data) {
+    const node = this.find(data);
+    return this.depthHelp(node);
+  }
+
+  depthHelp(target, currentNode = this.root, cont = 0) {
+    if (currentNode === null) return cont - 1;
+    if (target === currentNode) return cont;
+
+    cont += 1;
+    let newCont = this.depthHelp(target, currentNode.right, cont);
+    if (cont !== newCont) cont = this.depthHelp(target, currentNode.left, cont);
+
+    return cont;
   }
 
   // util functions
@@ -256,5 +275,4 @@ class Tree {
 
 const myTree = new Tree([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]);
 myTree.prettyPrint();
-//console.log(myTree.inOrder());
-console.log(myTree.inOrder((node) => console.log(node.data)));
+console.log(myTree.heigh(8));
