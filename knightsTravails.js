@@ -104,7 +104,7 @@ class KnightMoves {
 }
 
 // ----- TEST ----- //
-let myKnight = new KnightMoves([3, 3], [4, 3]);
+let myKnight = new KnightMoves([2, 4], [5, 1]); // [x, y] // init, end
 
 console.log(
   `=> You made it in ${myKnight.path.length - 1} moves!  Here's your path:`
