@@ -1,50 +1,15 @@
-class GameBoard {
-  constructor(newBoard) {
-    this._board = newBoard;
-  }
+import { Knight } from "./knight.js";
+import { GameBoard } from "./gameboard.js";
 
-  get board() {
-    return this._board;
-  }
-
-  set board(newBoard) {
-    this._board = newBoard;
-  }
-
-  isInvalidPosition(x, y) {
-    return x > 7 || y > 7 || x < 0 || y < 0 || this._board[x][y] === 1;
-  }
-
-  markPosition(x, y) {
-    this._board[x][y] = 1;
-  }
-}
-
-class Knight {
-  constructor(position, gameBoard, father = null) {
-    this.gameBoard = gameBoard;
-    this.position = position;
-    this.father = father;
-    this.gameBoard.markPosition(position[0], position[1]);
-  }
-
-  move(dx, dy) {
-    const x = this.position[0] + dx;
-    const y = this.position[1] + dy;
-
-    if (this.gameBoard.isInvalidPosition(x, y)) return null;
-    return new Knight([x, y], this.gameBoard, this);
-  }
-}
-
-class KnightMoves {
-  constructor(initial, target) {
+export class KnightMoves {
+  constructor(start, end) {
     this.rootKnight = new Knight(
-      initial,
+      start,
       new GameBoard(Array.from({ length: 8 }, () => Array(8).fill(0)))
     );
-    this.targetPosition = target;
+    this.targetPosition = end;
     this.path = this.getMoves();
+    this.moves = this.path.length - 1;
   }
 
   getMoves() {
@@ -101,15 +66,4 @@ class KnightMoves {
       currentKnight.position[1] === this.targetPosition[1]
     );
   }
-}
-
-// ----- TEST ----- //
-let myKnight = new KnightMoves([2, 4], [5, 1]); // [x, y] // init, end
-
-console.log(
-  `=> You made it in ${myKnight.path.length - 1} moves!  Here's your path:`
-);
-
-for (let index = myKnight.path.length - 1; index >= 0; index--) {
-  console.log(myKnight.path[index]);
 }
