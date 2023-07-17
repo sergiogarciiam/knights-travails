@@ -10,190 +10,106 @@ class GameBoard {
   set board(newBoard) {
     this._board = newBoard;
   }
+
+  isInvalidPosition(x, y) {
+    return x > 7 || y > 7 || x < 0 || y < 0 || this._board[x][y] === 1;
+  }
+
+  markPosition(x, y) {
+    this._board[x][y] = 1;
+  }
 }
 
 class Knight {
-  constructor(
-    position,
-    newBoard = [
-      [0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0],
-    ]
-  ) {
-    // [x, y]
-    this.gameBoard = new GameBoard(newBoard);
+  constructor(position, gameBoard, father = null) {
+    this.gameBoard = gameBoard;
     this.position = position;
-    this.nextKnights = [];
-
-    const x = this.position[0];
-    const y = this.position[1];
-
-    if (this.isRightPosition(x, y)) return null;
-    this.gameBoard.board[x][y] = 1;
+    this.father = father;
+    this.gameBoard.markPosition(position[0], position[1]);
   }
 
-  // UP
-  moveUpLeft() {
-    this.gameBoard.board[this.position[0]][this.position[1]] = 1;
+  move(dx, dy) {
+    const x = this.position[0] + dx;
+    const y = this.position[1] + dy;
 
-    const x = this.position[0] + 2;
-    const y = this.position[1] - 1;
-
-    if (this.isRightPosition(x, y)) return null;
-
-    const newPosition = [x, y];
-    this.gameBoard.board[x][y] = 1;
-    this.nextKnights.push(new Knight(newPosition, this.gameBoard.board));
-    this.gameBoard.board[x][y] = 0;
-  }
-
-  moveUpRight() {
-    this.gameBoard.board[this.position[0]][this.position[1]] = 1;
-
-    const x = this.position[0] + 2;
-    const y = this.position[1] + 1;
-
-    if (this.isRightPosition(x, y)) return null;
-
-    const newPosition = [x, y];
-    this.gameBoard.board[x][y] = 1;
-    this.nextKnights.push(new Knight(newPosition, this.gameBoard.board));
-    this.gameBoard.board[x][y] = 0;
-  }
-
-  // DOWN
-  moveDownLeft() {
-    this.gameBoard.board[this.position[0]][this.position[1]] = 1;
-
-    const x = this.position[0] - 2;
-    const y = this.position[1] - 1;
-
-    if (this.isRightPosition(x, y)) return null;
-
-    const newPosition = [x, y];
-    this.gameBoard.board[x][y] = 1;
-    this.nextKnights.push(new Knight(newPosition, this.gameBoard.board));
-    this.gameBoard.board[x][y] = 0;
-  }
-
-  moveDownRight() {
-    this.gameBoard.board[this.position[0]][this.position[1]] = 1;
-
-    const x = this.position[0] - 2;
-    const y = this.position[1] + 1;
-
-    if (this.isRightPosition(x, y)) return null;
-
-    const newPosition = [x, y];
-    this.gameBoard.board[x][y] = 1;
-    this.nextKnights.push(new Knight(newPosition, this.gameBoard.board));
-    this.gameBoard.board[x][y] = 0;
-  }
-
-  // Right
-  moveLeftUp() {
-    this.gameBoard.board[this.position[0]][this.position[1]] = 1;
-
-    const x = this.position[0] + 1;
-    const y = this.position[1] - 2;
-
-    if (this.isRightPosition(x, y)) return null;
-
-    const newPosition = [x, y];
-    this.gameBoard.board[x][y] = 1;
-    this.nextKnights.push(new Knight(newPosition, this.gameBoard.board));
-    this.gameBoard.board[x][y] = 0;
-  }
-
-  moveLeftDown() {
-    this.gameBoard.board[this.position[0]][this.position[1]] = 1;
-
-    const x = this.position[0] - 1;
-    const y = this.position[1] - 2;
-
-    if (this.isRightPosition(x, y)) return null;
-
-    const newPosition = [x, y];
-    this.gameBoard.board[x][y] = 1;
-    this.nextKnights.push(new Knight(newPosition, this.gameBoard.board));
-    this.gameBoard.board[x][y] = 0;
-  }
-
-  // RIGHT
-  moveRightUp() {
-    this.gameBoard.board[this.position[0]][this.position[1]] = 1;
-
-    const x = this.position[0] + 1;
-    const y = this.position[1] + 2;
-
-    if (this.isRightPosition(x, y)) return null;
-
-    const newPosition = [x, y];
-    this.gameBoard.board[x][y] = 1;
-    this.nextKnights.push(new Knight(newPosition, this.gameBoard.board));
-    this.gameBoard.board[x][y] = 0;
-  }
-
-  moveRightDown() {
-    this.gameBoard.board[this.position[0]][this.position[1]] = 1;
-
-    const x = this.position[0] - 1;
-    const y = this.position[1] + 2;
-
-    if (this.isRightPosition(x, y)) return null;
-
-    const newPosition = [x, y];
-    this.gameBoard.board[x][y] = 1;
-    this.nextKnights.push(new Knight(newPosition, this.gameBoard.board));
-    this.gameBoard.board[x][y] = 0;
-  }
-
-  isRightPosition(x, y) {
-    return x > 7 || y > 7 || x < 0 || y < 0 || this.gameBoard.board[x][y] === 1;
+    if (this.gameBoard.isInvalidPosition(x, y)) return null;
+    return new Knight([x, y], this.gameBoard, this);
   }
 }
 
-class MovementTree {
-  constructor(initial) {
-    this.rootKnight = new Knight(initial);
-    this.buildMovementsTree(this.rootKnight);
+class KnightMoves {
+  constructor(initial, target) {
+    this.rootKnight = new Knight(
+      initial,
+      new GameBoard(Array.from({ length: 8 }, () => Array(8).fill(0)))
+    );
+    this.targetPosition = target;
+    this.path = this.getMoves();
   }
 
-  buildMovementsTree(knight) {
-    knight.moveUpLeft();
-    knight.moveUpRight();
-    knight.moveDownLeft();
-    knight.moveDownRight();
-    knight.moveLeftUp();
-    knight.moveLeftDown();
-    knight.moveRightUp();
-    knight.moveRightDown();
-
-    knight.nextKnights.forEach((nextKnight) => {
-      this.buildMovementsTree(nextKnight);
-    });
-  }
-
-  getElements() {
-    let stack = [this.rootKnight];
+  getMoves() {
+    let queue = [this.rootKnight];
     let currentKnight = null;
+    let foundTarget = false;
+    const moves = [
+      [2, -1],
+      [2, 1],
+      [-2, -1],
+      [-2, 1],
+      [1, -2],
+      [-1, -2],
+      [1, 2],
+      [-1, 2],
+    ];
 
-    while (stack.length !== 0) {
-      currentKnight = stack.pop();
-      console.log(currentKnight.position);
+    while (queue.length !== 0) {
+      currentKnight = queue.shift();
 
-      currentKnight.nextKnights.forEach((nextKnight) => {
-        stack.push(nextKnight);
-      });
+      if (this.isTarget(currentKnight)) {
+        foundTarget = true;
+        break;
+      }
+
+      for (const [dx, dy] of moves) {
+        const newKnight = currentKnight.move(dx, dy);
+        if (newKnight !== null) queue.push(newKnight);
+      }
+    }
+
+    if (foundTarget) {
+      return this.getPath(currentKnight);
+    } else {
+      return null;
     }
   }
+
+  getPath(target) {
+    let currentKnight = target;
+    let positionsArray = [];
+
+    while (currentKnight !== null) {
+      positionsArray.push(currentKnight.position);
+      currentKnight = currentKnight.father;
+    }
+
+    return positionsArray.reverse();
+  }
+
+  isTarget(currentKnight) {
+    return (
+      currentKnight.position[0] === this.targetPosition[0] &&
+      currentKnight.position[1] === this.targetPosition[1]
+    );
+  }
 }
 
-let myKnight = new MovementTree([3, 3]);
-myKnight.getElements();
+// ----- TEST ----- //
+let myKnight = new KnightMoves([3, 3], [4, 3]);
+
+console.log(
+  `=> You made it in ${myKnight.path.length - 1} moves!  Here's your path:`
+);
+
+for (let index = myKnight.path.length - 1; index >= 0; index--) {
+  console.log(myKnight.path[index]);
+}
