@@ -247,6 +247,28 @@ class Tree {
     return cont;
   }
 
+  // balance
+  isBalanced(node = this.root) {
+    if (node === null) return true;
+
+    let rightHeigh = 0;
+    let leftHeigh = 0;
+
+    if (node.isRight()) rightHeigh = this.heighHelp(node.right);
+    if (node.isLeft()) leftHeigh = this.heighHelp(node.left);
+
+    let difference = Math.abs(rightHeigh - leftHeigh);
+
+    if (difference > 1) return false;
+
+    return this.isBalanced(node.right) && this.isBalanced(node.left);
+  }
+
+  reBalance() {
+    let newArray = this.levelOrder();
+    this.root = this.buildTree(newArray);
+  }
+
   // util functions
   deleteDuplicateValues(numbers) {
     return numbers.filter((value, index, self) => {
@@ -273,6 +295,48 @@ class Tree {
   }
 }
 
-const myTree = new Tree([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]);
+// FUNCTIONS TO TEST
+function getRandomArray() {
+  let randomArray = [];
+
+  for (let index = 0; index < 100; index++) {
+    randomArray.push(Math.floor(Math.random() * 101));
+  }
+
+  return randomArray;
+}
+
+// ----- TEST ----- //
+const myTree = new Tree(getRandomArray());
+
+// normal
 myTree.prettyPrint();
-console.log(myTree.heigh(8));
+console.log(`Is balanced? ${myTree.isBalanced()}`);
+console.log(`PreOrder: ${myTree.preOrder()}`);
+console.log(`InOrder: ${myTree.inOrder()}`);
+console.log(`PostOrder ${myTree.postOrder()}`);
+
+// add elements
+myTree.insert(Math.floor(Math.random() * 1001));
+myTree.insert(Math.floor(Math.random() * 1001));
+myTree.insert(Math.floor(Math.random() * 1001));
+myTree.insert(Math.floor(Math.random() * 1001));
+myTree.insert(Math.floor(Math.random() * 1001));
+myTree.insert(Math.floor(Math.random() * 1001));
+myTree.insert(Math.floor(Math.random() * 1001));
+myTree.insert(Math.floor(Math.random() * 1001));
+myTree.insert(Math.floor(Math.random() * 1001));
+myTree.insert(Math.floor(Math.random() * 1001));
+
+// no balance
+myTree.prettyPrint();
+console.log(`Is balanced? ${myTree.isBalanced()}`);
+
+// balance
+myTree.reBalance();
+
+myTree.prettyPrint();
+console.log(`Is balanced? ${myTree.isBalanced()}`);
+console.log(`PreOrder: ${myTree.preOrder()}`);
+console.log(`InOrder: ${myTree.inOrder()}`);
+console.log(`PostOrder ${myTree.postOrder()}`);
