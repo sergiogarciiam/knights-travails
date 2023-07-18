@@ -1,8 +1,8 @@
 # Knights Travails
 
-Implementation of a knights travails with JavaScript.
+Knights travails implemented with JavaScript.
 
-The project is from The [Odin Project](https://www.theodinproject.com/lessons/javascript-knights-travails) curriculum.
+This project is from [The Odin Project](https://www.theodinproject.com/lessons/javascript-knights-travails) curriculum.
 
 ## How to Use
 
@@ -11,8 +11,6 @@ This project will show the shortest possible way to get from one square to anoth
 - ``new knightMoves(start, end)`` will return a object which has the number of moves and the path.
 
 - start and end are arrays that indicate the coordinates.
-
-
 
 ## Author
 
