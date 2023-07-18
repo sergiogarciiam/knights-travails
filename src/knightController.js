@@ -1,19 +1,21 @@
 import { Knight } from "./knight.js";
 import { GameBoard } from "./gameboard.js";
 
-export class KnightMoves {
-  constructor(start, end) {
-    this.rootKnight = new Knight(
+export const KnightController = (() => {
+  let rootKnight = null;
+  let targetPosition = null;
+
+  const knightMoves = (start, end) => {
+    rootKnight = new Knight(
       start,
       new GameBoard(Array.from({ length: 8 }, () => Array(8).fill(0)))
     );
-    this.targetPosition = end;
-    this.path = this.getMoves();
-    this.moves = this.path.length - 1;
-  }
+    targetPosition = end;
+    return getMoves();
+  };
 
-  getMoves() {
-    let queue = [this.rootKnight];
+  function getMoves() {
+    let queue = [rootKnight];
     let currentKnight = null;
     let foundTarget = false;
     const moves = [
@@ -30,7 +32,7 @@ export class KnightMoves {
     while (queue.length !== 0) {
       currentKnight = queue.shift();
 
-      if (this.isTarget(currentKnight)) {
+      if (isTarget(currentKnight)) {
         foundTarget = true;
         break;
       }
@@ -42,13 +44,13 @@ export class KnightMoves {
     }
 
     if (foundTarget) {
-      return this.getPath(currentKnight);
+      return getPath(currentKnight);
     } else {
       return null;
     }
   }
 
-  getPath(target) {
+  function getPath(target) {
     let currentKnight = target;
     let positionsArray = [];
 
@@ -60,10 +62,12 @@ export class KnightMoves {
     return positionsArray.reverse();
   }
 
-  isTarget(currentKnight) {
+  function isTarget(currentKnight) {
     return (
-      currentKnight.position[0] === this.targetPosition[0] &&
-      currentKnight.position[1] === this.targetPosition[1]
+      currentKnight.position[0] === targetPosition[0] &&
+      currentKnight.position[1] === targetPosition[1]
     );
   }
-}
+
+  return { knightMoves };
+})();

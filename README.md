@@ -1,6 +1,6 @@
 # Knights Travails
 
-Knights travails implemented with JavaScript.
+[Knights travails](./src/knightController.js) implemented with JavaScript.
 
 This project is from [The Odin Project](https://www.theodinproject.com/lessons/javascript-knights-travails) curriculum.
 
@@ -8,9 +8,9 @@ This project is from [The Odin Project](https://www.theodinproject.com/lessons/j
 
 This project will show the shortest possible way to get from one square to another by outputting all squares the knight will stop on along the way using BFS.
 
-- ``new knightMoves(start, end)`` will return a object which has the number of moves and the path.
+- ``knightMoves(start, end)`` will return an array which is the shortest path.
 
-- start and end are arrays that indicate the coordinates.
+- The parameters **start** and **end** are arrays that indicate the coordinates **[x, y]**
 
 ## Author
 
